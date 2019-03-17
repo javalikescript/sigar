@@ -238,7 +238,7 @@ int lua_sigar_proc_get(lua_State *L) {
 int lua_sigar_pid_get(lua_State *L) {
 	sigar_t *s = *(sigar_t **)luaL_checkudata(L, 1, "sigar");
 
-	lua_pushnumber(L, sigar_pid_get(s));
+	LUA_PUSH_INT(L, sigar_pid_get(s));
 
 	return 1;
 }

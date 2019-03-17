@@ -166,8 +166,11 @@ static void set_info (lua_State *L) {
 	lua_settable (L, -3);
 }
 
-
+#if LUA_VERSION_NUM==501
 static const struct luaL_reg sigarlib[] = {
+#else
+static const struct luaL_Reg sigarlib[] = {
+#endif
 	{"new", lua_sigar_new},
 	{NULL, NULL}
 };
@@ -179,7 +182,18 @@ static const struct luaL_reg sigarlib[] = {
 #endif
 
 LUAEXT_API int luaopen_sigar (lua_State *L) {
+#if LUA_VERSION_NUM==501
 	luaL_register (L, "sigar", sigarlib);
 	set_info (L);
+#else
+  lua_newtable(L);
+  luaL_setfuncs(L, sigarlib, 0);
+  lua_pushliteral(L, "Copyright (c) 2009 Sun Microsystems, Inc.");
+  lua_setfield(L, -2, "_COPYRIGHT");
+  lua_pushliteral(L, "sigar.*");
+  lua_setfield(L, -2, "_DESCRIPTION");
+  lua_pushliteral(L, "LuaSigar 0.1");
+  lua_setfield(L, -2, "_VERSION");
+#endif
 	return 1;
 }

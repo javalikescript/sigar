@@ -31,11 +31,21 @@
 
 #include "sigar.h"
 
+#if LUA_VERSION_NUM >= 503
+#define luaL_checkint(LS, NA) ((int) luaL_checkinteger(LS, NA))
+#endif
+
+#if LUA_VERSION_NUM >= 503
+#define LUA_PUSH_INT(LS, IV) lua_pushinteger(LS, IV)
+#else
+#define LUA_PUSH_INT(LS, IV) lua_pushnumber(LS, IV)
+#endif
+
 #define LUA_EXPORT_INT(x, y) \
 	if (x->y == SIGAR_FIELD_NOTIMPL) { \
 		lua_pushnil(L); \
 	} else { \
-		lua_pushnumber(L, x->y); \
+		LUA_PUSH_INT(L, x->y); \
 	} \
 	lua_setfield(L, -2, #y);
 
